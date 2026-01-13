@@ -25,42 +25,17 @@ agent = Agent(
 )
 
 def chat_with_agent(user_query: str):
-    # 1. Retrieve hybrid context
-    context = memory.retrieve_full_context(user_query)
-    
-    similar_results = context.get('similar', [])
-    recent_data = context.get('recent', [])
+    # 1. Get only the last 5 messages
+    recent_msgs = memory.get_recent_context(limit=5)
 
-    # 2. Filter Similar Context by Threshold
-    # (Lower score = higher similarity for L2Distance)
-    RELEVANCE_THRESHOLD = 0.8 
-    valid_similar = [
-        item['content'] for item in similar_results 
-        if item['score'] < RELEVANCE_THRESHOLD
-    ]
-
-    # 3. Build the Hybrid Prompt
-    prompt_sections = ["You are a professional Property Agent assistant."]
-
-    # Always add Recent History if it exists
-    if recent_data:
-        history_str = "\n".join(recent_data)
-        prompt_sections.append(f"--- RECENT CONVERSATION HISTORY ---\n{history_str}")
-
-    # Only add Similar Context if it passes the threshold
-    if valid_similar:
-        similar_str = "\n".join(valid_similar)
-        prompt_sections.append(f"--- RELEVANT PAST FACTS ---\n{similar_str}")
-        print(f"--- Hybrid: Injected {len(valid_similar)} similar facts ---")
+    # 2. Build a simple prompt with history
+    if recent_msgs:
+        history_str = "\n".join(recent_msgs)
+        full_prompt = f"Recent conversation history:\n{history_str}\n\nUser Question: {user_query}"
     else:
-        print("--- Hybrid: No similar facts met the threshold ---")
+        full_prompt = user_query
 
-    # Final User Question
-    prompt_sections.append(f"CURRENT USER QUESTION: {user_query}")
-    
-    full_prompt = "\n\n".join(prompt_sections)
-
-    # 4. Execute Streaming Response
+    # 3. Stream Response
     response_stream = agent.run(full_prompt, stream=True)
     full_response = ""
     for chunk in response_stream:
@@ -68,6 +43,6 @@ def chat_with_agent(user_query: str):
         full_response += content
         yield content
 
-    # 5. Save the interaction
+    # 4. Save to ChDB
     memory.save_interaction("user", user_query)
     memory.save_interaction("agent", full_response)
