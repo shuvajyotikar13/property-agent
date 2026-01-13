@@ -32,7 +32,7 @@ def initialize_database():
             district,
             county
         FROM s3(
-            'https://uk_property_prices_test.storage.googleapis.com/uk_prices.csv.zst', 
+            'gs://uk_property_prices_test/uk_prices.csv.zst', 
             'CSVWithNames', 
             'uuid String, price UInt32, date String, post_code String, property_type String, is_new String, duration String, street String, locality String, town String, district String, county String, category String, status String'
         )
