@@ -25,38 +25,42 @@ agent = Agent(
 )
 
 def chat_with_agent(user_query: str):
-    # 1. Retrieve context
-    # We now expect 'similar' to be a list of dicts: [{'content': '...', 'score': 0.4}]
+    # 1. Retrieve hybrid context
     context = memory.retrieve_full_context(user_query)
     
     similar_results = context.get('similar', [])
     recent_data = context.get('recent', [])
 
-    # 2. Apply Relevance Threshold Check
-    # Only keep similar items if the distance score is low (lower = more similar)
+    # 2. Filter Similar Context by Threshold
+    # (Lower score = higher similarity for L2Distance)
     RELEVANCE_THRESHOLD = 0.8 
-    
-    valid_similar_content = [
+    valid_similar = [
         item['content'] for item in similar_results 
         if item['score'] < RELEVANCE_THRESHOLD
     ]
 
-    # 3. Logic Gate
-    if valid_similar_content:
-        context_str = "\n".join(valid_similar_content)
-        full_prompt = f"Found relevant background info:\n{context_str}\n\nQuestion: {user_query}"
-        print(f"--- Logic: Similar (Best Score: {similar_results[0]['score']:.4f}) ---")
-        
-    elif recent_data:
-        context_str = "\n".join(recent_data)
-        full_prompt = f"Recent history context:\n{context_str}\n\nQuestion: {user_query}"
-        print("--- Logic: Recent History (Similarity was too low) ---")
-        
-    else:
-        full_prompt = user_query
-        print("--- Logic: Raw Query ---")
+    # 3. Build the Hybrid Prompt
+    prompt_sections = ["You are a professional Property Agent assistant."]
 
-    # 4. Run Agent (Streaming)
+    # Always add Recent History if it exists
+    if recent_data:
+        history_str = "\n".join(recent_data)
+        prompt_sections.append(f"--- RECENT CONVERSATION HISTORY ---\n{history_str}")
+
+    # Only add Similar Context if it passes the threshold
+    if valid_similar:
+        similar_str = "\n".join(valid_similar)
+        prompt_sections.append(f"--- RELEVANT PAST FACTS ---\n{similar_str}")
+        print(f"--- Hybrid: Injected {len(valid_similar)} similar facts ---")
+    else:
+        print("--- Hybrid: No similar facts met the threshold ---")
+
+    # Final User Question
+    prompt_sections.append(f"CURRENT USER QUESTION: {user_query}")
+    
+    full_prompt = "\n\n".join(prompt_sections)
+
+    # 4. Execute Streaming Response
     response_stream = agent.run(full_prompt, stream=True)
     full_response = ""
     for chunk in response_stream:
@@ -64,5 +68,6 @@ def chat_with_agent(user_query: str):
         full_response += content
         yield content
 
+    # 5. Save the interaction
     memory.save_interaction("user", user_query)
     memory.save_interaction("agent", full_response)
