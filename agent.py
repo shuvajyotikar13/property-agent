@@ -25,39 +25,44 @@ agent = Agent(
 )
 
 def chat_with_agent(user_query: str):
-    # 1. Retrieve relevant past context
-    context = memory.retrieve_full_context(
-        query=user_query, 
-        similar_limit=3, 
-        recent_limit=5
-    )
+    # 1. Retrieve context
+    # We now expect 'similar' to be a list of dicts: [{'content': '...', 'score': 0.4}]
+    context = memory.retrieve_full_context(user_query)
     
-    similar_data = context.get('similar', [])
+    similar_results = context.get('similar', [])
     recent_data = context.get('recent', [])
 
-    # 2. Logic Check & Prompt Construction
-    if similar_data:
-        # Case 1: Found semantically similar messages
-        context_str = "\n".join(similar_data)
-        full_prompt = f"Relevant past context:\n{context_str}\n\nUser Question: {user_query}"
+    # 2. Apply Relevance Threshold Check
+    # Only keep similar items if the distance score is low (lower = more similar)
+    RELEVANCE_THRESHOLD = 0.8 
+    
+    valid_similar_content = [
+        item['content'] for item in similar_results 
+        if item['score'] < RELEVANCE_THRESHOLD
+    ]
+
+    # 3. Logic Gate
+    if valid_similar_content:
+        context_str = "\n".join(valid_similar_content)
+        full_prompt = f"Found relevant background info:\n{context_str}\n\nQuestion: {user_query}"
+        print(f"--- Logic: Similar (Best Score: {similar_results[0]['score']:.4f}) ---")
+        
     elif recent_data:
-        # Case 2: No similarity found, but we have recent history
         context_str = "\n".join(recent_data)
-        full_prompt = f"Recent conversation history:\n{context_str}\n\nUser Question: {user_query}"
+        full_prompt = f"Recent history context:\n{context_str}\n\nQuestion: {user_query}"
+        print("--- Logic: Recent History (Similarity was too low) ---")
+        
     else:
-        # Case 3: Fresh conversation (no data yet)
         full_prompt = user_query
+        print("--- Logic: Raw Query ---")
 
-    # 3. Get response
+    # 4. Run Agent (Streaming)
     response_stream = agent.run(full_prompt, stream=True)
-
     full_response = ""
     for chunk in response_stream:
-        # Note: Ensure 'chunk' has a '.content' attribute based on your specific Agent SDK
         content = getattr(chunk, 'content', str(chunk))
         full_response += content
         yield content
 
-    # 4. Save the interaction to ChDB
     memory.save_interaction("user", user_query)
     memory.save_interaction("agent", full_response)
