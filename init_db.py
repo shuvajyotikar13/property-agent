@@ -44,13 +44,12 @@ def initialize_database():
     sess.query("CREATE DATABASE IF NOT EXISTS agent_state")
     sess.query("""
         CREATE TABLE IF NOT EXISTS agent_state.conversation_memory (
-            id UUID DEFAULT generateUUIDv4(),
             role String,
             content String,
-            embedding Array(Float32),
-            timestamp DateTime DEFAULT now()
-        ) ENGINE = MergeTree ORDER BY timestamp
-    """)
+            created_at DateTime64(3) DEFAULT now()
+            ) ENGINE = MergeTree() 
+            ORDER BY created_at;
+            """)
     
     # Verify data
     result = sess.query("SELECT count() FROM uk_data.property_prices", "JSON")
