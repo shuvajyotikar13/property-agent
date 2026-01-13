@@ -26,20 +26,38 @@ agent = Agent(
 
 def chat_with_agent(user_query: str):
     # 1. Retrieve relevant past context
-    context = memory.retrieve_context(user_query)
-    context_str = "\n".join(context)
+    context = memory.retrieve_full_context(
+        query=user_query, 
+        similar_limit=3, 
+        recent_limit=5
+    )
     
-    # 2. Add context to the prompt (simplified RAG)
-    full_prompt = f"Context from previous messages:\n{context_str}\n\nUser Question: {user_query}"
-    
+    similar_data = context.get('similar', [])
+    recent_data = context.get('recent', [])
+
+    # 2. Logic Check & Prompt Construction
+    if similar_data:
+        # Case 1: Found semantically similar messages
+        context_str = "\n".join(similar_data)
+        full_prompt = f"Relevant past context:\n{context_str}\n\nUser Question: {user_query}"
+    elif recent_data:
+        # Case 2: No similarity found, but we have recent history
+        context_str = "\n".join(recent_data)
+        full_prompt = f"Recent conversation history:\n{context_str}\n\nUser Question: {user_query}"
+    else:
+        # Case 3: Fresh conversation (no data yet)
+        full_prompt = user_query
+
     # 3. Get response
     response_stream = agent.run(full_prompt, stream=True)
-    
+
     full_response = ""
     for chunk in response_stream:
-        full_response += chunk.content
-        yield chunk.content
-        
-    # 4. Save the interaction
+        # Note: Ensure 'chunk' has a '.content' attribute based on your specific Agent SDK
+        content = getattr(chunk, 'content', str(chunk))
+        full_response += content
+        yield content
+
+    # 4. Save the interaction to ChDB
     memory.save_interaction("user", user_query)
     memory.save_interaction("agent", full_response)
