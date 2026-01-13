@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  property-agent:
+    platform: linux/arm64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: local-property-agent
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - PORT=8080
+      - HOST=0.0.0.0
+    # Note: We do NOT use volumes here (e.g., - .:/app)
+    # Why? Because init_db.py creates the database inside the container image 
+    # at build time. If we mount a volume, we might overwrite that 
+    # internal data with our empty local folder.

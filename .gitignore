@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Environment Variables
+.env
+
+# Local Database (if you run init_db.py locally)
+chdb_data/
+chdb_data_*/
+
+# IDE settings
+.vscode/
+.idea/

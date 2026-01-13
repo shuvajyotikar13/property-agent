@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-01-12T00:03:44+05:30",
+  "id": "data-agents",
+  "duration": 2,
+  "title": "Building Self-Contained Data Agents using Google Cloud Run",
+  "summary": "Build persistent, self-contained data agents using Agno, chDB, and Google Cloud Run.",
+  "source": "tutorial.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cloud",
+    "ai",
+    "big-data"
+  ],
+  "tags": [],
+  "feedback": "https://github.com/data_agents/issues",
+  "url": "data-agents"
+}

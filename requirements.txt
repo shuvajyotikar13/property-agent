@@ -1,0 +1,5 @@
+phidata
+google-generativeai
+fastapi
+uvicorn
+chdb>=2.0

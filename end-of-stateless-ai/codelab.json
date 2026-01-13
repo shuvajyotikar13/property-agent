@@ -1,0 +1,24 @@
+{
+  "environment": "web",
+  "format": "html",
+  "prefix": "https://storage.googleapis.com",
+  "mainga": "UA-49880327-14",
+  "updated": "2026-01-11T23:07:19+05:30",
+  "id": "end-of-stateless-ai",
+  "duration": 9,
+  "title": "The End of Stateless AI: Building Self-Contained Data Agents",
+  "summary": "Build persistent, self-contained data agents using Agno, chDB, and Google Cloud Run.",
+  "source": "tutorial.md",
+  "theme": "",
+  "status": [
+    "published"
+  ],
+  "category": [
+    "cloud",
+    "ai",
+    "data"
+  ],
+  "tags": [],
+  "feedback": "https://github.com/your-repo/issues",
+  "url": "end-of-stateless-ai"
+}
