@@ -31,17 +31,25 @@ class ChDBMemory:
         """
         self.session.query(sql)
 
-    def get_similar_conversations(self, query: str, limit: int = 5) -> List[str]:
-        """Retrieves context based on vector similarity."""
+    def get_similar_conversations(self, query: str, limit: int = 3) -> List[dict]:
+        """Returns list of dicts with content and their similarity score."""
         query_emb = self.embedder.get_embedding(query)
-
-        # Use L2Distance for vector similarity (Brute force is fast enough for <100k rows)
+    
+        # Calculate distance and alias it as 'score'
         sql = f"""
-        SELECT content FROM agent_state.conversation_memory
-        ORDER BY L2Distance(embedding, {str(query_emb)}) ASC
+        SELECT content, L2Distance(embedding, {str(query_emb)}) as score
+        FROM agent_state.conversation_memory
+        ORDER BY score ASC
         LIMIT {limit}
-        """
-        return self._execute_and_parse(sql)
+        """    
+        try:
+            res = self.session.query(sql, "JSON")
+            rows = json.loads(res.bytes())
+            # Return both content and score for filtering
+            return [{"content": r['content'], "score": r['score']} for r in rows.get('data', [])]
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
 
     def get_last_n_conversations(self, n: int = 5) -> List[str]:
         """Retrieves the most recent N interactions (chronological)."""
