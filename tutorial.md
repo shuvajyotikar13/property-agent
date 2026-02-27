@@ -1,14 +1,6 @@
-author:      Shruti Mantri, Shuva Jyoti Kar
-summary:     Build persistent, self-contained data agents using Agno, chDB, and Google Cloud Run.
-id:          data-agents
-categories:  cloud, ai, big-data
-status:      Published
-Feedback Link: https://github.com/data_agents/issues
-
 # Building Self-Contained Data Agents using Google Cloud Run
 
 ## Introduction
-Duration: 2:00
 
 For too long, AI agents have been built as just “brains” — brilliant at reasoning, but fundamentally disconnected from the massive datasets they need to analyze. Traditionally, this meant high latency, complex VPC peering, and expensive external database connections.
 
