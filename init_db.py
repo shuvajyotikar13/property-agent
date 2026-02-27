@@ -16,7 +16,7 @@ def initialize_database():
     print("Downloading and inserting sample data from S3...")
     # We use the S3 table function to stream data directly into our local chDB
     # LIMIT 10000 ensures we don't blow up the container image size
-    # Updated query with the correct Amazon S3 bucket path
+    # Updated query with the correct GCS bucket path
     sess.query("""
         CREATE TABLE IF NOT EXISTS uk_data.property_prices ENGINE = MergeTree ORDER BY post_code AS
         SELECT 
