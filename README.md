@@ -59,7 +59,7 @@ The "Deep Data" Test: Ask a question requiring the baked-in dataset.
 
 ## 🔗 Resources
 
-Author: [Shuva Jyoti Kar](https://github.com/shuvajyotikar13), [Shruti Mantri](https://github.com/shrutimantri)
+Authors: [Shuva Jyoti Kar](https://github.com/shuvajyotikar13), [Shruti Mantri](https://github.com/shrutimantri)
 
 Article: [The End of Stateless AI: Building Self-Contained Data Agents](https://medium.com/@shuva.jyoti.kar.87/the-end-of-stateless-ai-building-self-contained-data-agents-with-google-cloud-run-3d7ced47d34e)
 
