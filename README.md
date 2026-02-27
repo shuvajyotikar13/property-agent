@@ -49,7 +49,7 @@ Deployment is a single command. The Dockerfile ensures the database is "baked" i
      --region us-central1 \
      --allow-unauthenticated
 
-##📝 Verification
+## 📝 Verification
 
 The "Deep Data" Test: Ask a question requiring the baked-in dataset.
 
@@ -57,10 +57,10 @@ The "Deep Data" Test: Ask a question requiring the baked-in dataset.
     -H "Content-Type: application/json" \
     -d '{"text": "What is the average price of all properties in the database?"}'
 
-##🔗 Resources
+## 🔗 Resources
 
-    Author: Shuva Jyoti Kar, Shruti Mantri
+Author: [Shuva Jyoti Kar](https://github.com/shuvajyotikar13), [Shruti Mantri](https://github.com/shrutimantri)
 
-    Article: The End of Stateless AI: Building Self-Contained Data Agents
+Article: [The End of Stateless AI: Building Self-Contained Data Agents](https://medium.com/@shuva.jyoti.kar.87/the-end-of-stateless-ai-building-self-contained-data-agents-with-google-cloud-run-3d7ced47d34e)
 
-    Frameworks: Agno, chDB, Google Cloud Run
+Frameworks: Agno, chDB, Google Cloud Run
