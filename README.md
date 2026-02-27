@@ -10,7 +10,7 @@ Traditional agent architectures look like a hub-and-spoke model where the agent 
 
 [Image of a software architecture diagram showing Agno, chDB, and Google Cloud Run integrated into a single container]
 
-* **The Brain (Agno):** Handles the reasoning, conversation state, and tool selection with a tiny memory footprint (~3.8 KiB).
+* **The Brain (Agno):** Handles the reasoning, conversation state, and tool selection with a tiny memory footprint (~6656 bytes).
 * **The Memory Engine (chDB):** An in-process ClickHouse engine that runs inside the Python interpreter, performing OLAP queries on local files without a network socket.
 * **The Body (Google Cloud Run):** The serverless wrapper that hosts the brain and engine, providing instant CPU bursts and scaling to zero when idle.
 
