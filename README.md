@@ -59,8 +59,8 @@ The "Deep Data" Test: Ask a question requiring the baked-in dataset.
 
 ##🔗 Resources
 
-Author: Shuva Jyoti Kar, Shruti Mantri
+    Author: Shuva Jyoti Kar, Shruti Mantri
 
-Article: The End of Stateless AI: Building Self-Contained Data Agents
+    Article: The End of Stateless AI: Building Self-Contained Data Agents
 
-Frameworks: Agno, chDB, Google Cloud Run
+    Frameworks: Agno, chDB, Google Cloud Run
