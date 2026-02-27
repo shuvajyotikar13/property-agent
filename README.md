@@ -20,3 +20,47 @@ Traditional agent architectures look like a hub-and-spoke model where the agent 
 
 * **Data "Baking":** Uses `init_db.py` to process raw data into highly optimized, indexed ClickHouse files during the Docker build phase.
 * **Zero-Latency Analytics:** Performs vectorized SQL scans on 20,000+ rows in milliseconds because
+
+## ⚙️ Getting Started
+
+### 1. Pre-requisites
+
+     a. Google Cloud Project with Cloud Run enabled.
+
+     b. Google AI Studio API Key (Gemini 3.0 Flash).
+
+     c. Docker installed locally.  
+     
+### 2. Local Setup & Testing
+
+     # Clone the repository
+    git clone [https://github.com/shuvajyotikar/property-agent.git](https://github.com/shuvajyotikar/property-agent.git)
+    cd property-agent
+
+    # Build and run with Docker Compose
+    docker-compose up --build
+### 3. Deploy to Google Cloud Run
+  
+Deployment is a single command. The Dockerfile ensures the database is "baked" into the container before it goes live.
+
+     gcloud run deploy property-agent \
+     --source . \
+     --set-env-vars GOOGLE_API_KEY=[YOUR_KEY] \
+     --region us-central1 \
+     --allow-unauthenticated
+
+##📝 Verification
+
+The "Deep Data" Test: Ask a question requiring the baked-in dataset.
+
+    curl -X POST "https://[YOUR-SERVICE-URL]/chat" \
+    -H "Content-Type: application/json" \
+    -d '{"text": "What is the average price of all properties in the database?"}'
+
+##🔗 Resources
+
+Author: Shuva Jyoti Kar, Shruti Mantri
+
+Article: The End of Stateless AI: Building Self-Contained Data Agents
+
+Frameworks: Agno, chDB, Google Cloud Run
